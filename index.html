@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload HTML Website</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    input[type="file"] {
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #0070f3;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #link {
+      margin-top: 20px;
+      font-weight: bold;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Upload HTML Website</h1>
+    <form id="uploadForm">
+      <input type="file" id="htmlFile" accept=".html" required />
+      <br>
+      <button type="submit">Upload</button>
+    </form>
+    <div id="link"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const link = document.getElementById('link');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const file = document.getElementById('htmlFile').files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.id) {
+          link.innerHTML = `Berhasil upload!<br><a href="/sites/${data.id}/index.html" target="_blank">Lihat: /sites/${data.id}/index.html</a>`;
+        } else {
+          link.innerHTML = 'Upload gagal!';
+        }
+      } catch (err) {
+        console.error(err);
+        link.innerText = 'Terjadi kesalahan saat upload.';
+      }
+    });
+  </script>
+</body>
+</html>
